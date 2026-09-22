@@ -50,9 +50,14 @@ export default async function PanelOverviewPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl text-ink-800">Hola, {business.name}</h1>
-        <Link href={`/negocio/${business.slug}`} className="link-underline text-sm text-ink-600">
-          Ver mi página pública →
-        </Link>
+        <div className="flex items-center gap-5 text-sm">
+          <Link href="/panel/qr" className="link-underline text-ink-600">
+            Ver código QR
+          </Link>
+          <Link href={`/negocio/${business.slug}`} className="link-underline text-ink-600">
+            Ver mi página pública →
+          </Link>
+        </div>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">

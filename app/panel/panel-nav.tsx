@@ -12,6 +12,7 @@ const items = [
   { href: "/panel/recompensas", label: "Recompensas" },
   { href: "/panel/descuentos", label: "Descuentos" },
   { href: "/panel/puntos", label: "Puntos" },
+  { href: "/panel/qr", label: "Código QR" },
 ];
 
 export function PanelNav({ hasBusiness }: { hasBusiness: boolean }) {
