@@ -11,7 +11,7 @@ export function Label({ className, ...props }: LabelHTMLAttributes<HTMLLabelElem
 }
 
 const fieldBase =
-  "w-full rounded border border-ink-800/15 bg-cream-50 px-3.5 py-2.5 text-[0.95rem] text-ink-800 placeholder:text-ink-400/60 outline-none transition focus:border-rust-500 focus:ring-1 focus:ring-rust-500/40";
+  "w-full rounded border border-ink-200 bg-cream-50 px-3.5 py-2.5 text-[0.95rem] text-ink-800 placeholder:text-ink-400/60 outline-none transition focus:border-ink-800 focus:ring-1 focus:ring-ink-800/15";
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => (
@@ -43,5 +43,5 @@ export function FieldHint({ children }: { children: React.ReactNode }) {
 
 export function FieldError({ children }: { children?: string | null }) {
   if (!children) return null;
-  return <p className="mt-1.5 text-xs text-rust-600">{children}</p>;
+  return <p className="mt-1.5 text-xs text-danger-600">{children}</p>;
 }

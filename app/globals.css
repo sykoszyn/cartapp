@@ -11,34 +11,13 @@ html {
 }
 
 body {
-  background-color: #FAF5EC;
-  color: #221E19;
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("/grain.svg");
-  background-size: 220px 220px;
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 0;
-  mix-blend-mode: multiply;
-}
-
-#__next-app-root,
-main,
-header,
-footer {
-  position: relative;
-  z-index: 1;
+  background-color: #FFFFFF;
+  color: #161618;
 }
 
 ::selection {
-  background-color: #DE8E5A;
-  color: #221E19;
+  background-color: #F7C348;
+  color: #161618;
 }
 
 .link-underline {
@@ -54,6 +33,37 @@ footer {
 
 .text-balance {
   text-wrap: balance;
+}
+
+@layer components {
+  .font-display {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Divisor tipo "ticket perforado": una línea punteada con dos muescas
+   circulares en los extremos que "recortan" el fondo de la tarjeta. */
+.ticket-divider {
+  position: relative;
+  border-top: 1.5px dashed theme("colors.ink.200");
+}
+.ticket-divider::before,
+.ticket-divider::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: theme("colors.cream.50");
+  border: 1.5px solid theme("colors.ink.200");
+}
+.ticket-divider::before {
+  left: -19px;
+}
+.ticket-divider::after {
+  right: -19px;
 }
 
 @layer utilities {

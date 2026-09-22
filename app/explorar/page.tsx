@@ -75,7 +75,7 @@ export default async function ExplorarPage({
                 <Link
                   key={b.id}
                   href={`/negocio/${b.slug}`}
-                  className="group overflow-hidden rounded-lg border border-ink-800/10 bg-cream-50 transition hover:border-rust-500/40 hover:shadow-card"
+                  className="group overflow-hidden rounded-lg border border-ink-800/10 bg-cream-50 transition hover:border-ink-900 hover:shadow-card"
                 >
                   <div className="aspect-video bg-ink-800/5">
                     {b.cover_url && (

@@ -20,7 +20,7 @@ export function DeleteButton({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
   return (
     <button
-      className="link-underline text-rust-600 disabled:opacity-50"
+      className="link-underline text-danger-600 disabled:opacity-50"
       disabled={isPending}
       onClick={() => {
         if (confirm("¿Eliminar este producto?")) {

@@ -3,10 +3,7 @@ import { cn } from "@/lib/utils";
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "rounded-lg border border-ink-800/10 bg-cream-50 shadow-card",
-        className
-      )}
+      className={cn("rounded-lg border border-ink-200 bg-cream-50 shadow-card", className)}
       {...props}
     />
   );
@@ -18,14 +15,14 @@ export function Badge({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & { variant?: "default" | "olive" | "rust" }) {
   const variants = {
-    default: "bg-ink-800/5 text-ink-600",
+    default: "bg-ink-100 text-ink-600",
     olive: "bg-olive-100 text-olive-600",
-    rust: "bg-rust-50 text-rust-600",
+    rust: "bg-rust-100 text-rust-700",
   };
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+        "inline-flex items-center rounded-sm px-2 py-1 text-[0.7rem] font-medium uppercase tracking-wide",
         variants[variant],
         className
       )}

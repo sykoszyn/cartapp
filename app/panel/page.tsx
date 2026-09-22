@@ -91,7 +91,7 @@ export default async function PanelOverviewPage() {
 function StatCard({ label, value, href }: { label: string; value: number; href: string }) {
   return (
     <Link href={href}>
-      <Card className="p-5 transition hover:border-rust-500/40">
+      <Card className="p-5 transition hover:border-ink-900">
         <p className="text-sm text-ink-400">{label}</p>
         <p className="mt-2 font-display text-3xl text-ink-800">{value}</p>
       </Card>

@@ -13,13 +13,13 @@ export function buttonVariants({
   className?: string;
 } = {}) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded font-medium transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+    "inline-flex items-center justify-center gap-2 rounded font-medium transition-colors duration-150 disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-800/20";
 
   const variants: Record<Variant, string> = {
-    primary: "bg-rust-500 text-cream-50 hover:bg-rust-600",
-    secondary: "bg-ink-800 text-cream-50 hover:bg-ink-900",
-    outline: "border border-ink-800/20 text-ink-800 hover:border-ink-800/50 bg-transparent",
-    ghost: "text-ink-800 hover:bg-ink-800/5",
+    primary: "bg-ink-900 text-cream-50 hover:bg-ink-800",
+    secondary: "bg-rust-500 text-ink-900 hover:bg-rust-600",
+    outline: "border border-ink-200 text-ink-800 hover:border-ink-800 bg-transparent",
+    ghost: "text-ink-600 hover:bg-ink-100",
   };
 
   const sizes: Record<Size, string> = {

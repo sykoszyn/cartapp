@@ -9,51 +9,60 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // superficies neutras (blanco → gris muy claro)
         cream: {
-          50: "#FDFBF7",
-          100: "#FAF5EC",
-          200: "#F3E9D8",
-          300: "#E9D9BE",
+          50: "#FFFFFF",
+          100: "#FAFAFA",
+          200: "#F0F0F1",
+          300: "#E4E4E6",
         },
+        // escala de grises real para texto y bordes
         ink: {
-          50: "#F4F2EF",
-          100: "#E7E2DB",
-          400: "#5B5347",
-          600: "#3A342B",
-          800: "#221E19",
-          900: "#171310",
+          50: "#F7F7F8",
+          100: "#EBEBED",
+          200: "#D8D8DC",
+          400: "#7B7B84",
+          600: "#3F3F46",
+          800: "#161618",
+          900: "#0A0A0B",
         },
+        // acento único: ámbar de sello/ticket
         rust: {
-          50: "#FBECE3",
-          100: "#F4CBB3",
-          300: "#DE8E5A",
-          500: "#BE5A2E",
-          600: "#A44823",
-          700: "#82391B",
+          50: "#FEF6E7",
+          100: "#FCE7B8",
+          300: "#F7C348",
+          500: "#EDA608",
+          600: "#C58607",
+          700: "#8F6205",
         },
+        // secundario: verde azulado para estados "activo/éxito"
         olive: {
-          100: "#E4E6D3",
-          300: "#B7BD8F",
-          500: "#767E4F",
-          600: "#5C6340",
+          100: "#DEEEEA",
+          300: "#8FC7BB",
+          500: "#1F7A66",
+          600: "#166352",
+        },
+        // reservado sólo para errores/estados destructivos
+        danger: {
+          50: "#FDF0EF",
+          500: "#C4432E",
+          600: "#A8351F",
         },
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "serif"],
-        body: ["var(--font-work-sans)", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        soft: "0 2px 20px -4px rgba(34, 30, 25, 0.12)",
-        card: "0 1px 2px rgba(34,30,25,0.06), 0 8px 24px -12px rgba(34,30,25,0.18)",
+        soft: "0 1px 2px rgba(10, 10, 11, 0.04)",
+        card: "0 1px 2px rgba(10, 10, 11, 0.04)",
       },
       borderRadius: {
-        sm: "6px",
-        DEFAULT: "10px",
-        lg: "16px",
-        xl: "22px",
-      },
-      backgroundImage: {
-        grain: "url('/grain.svg')",
+        sm: "3px",
+        DEFAULT: "5px",
+        lg: "7px",
+        xl: "10px",
       },
     },
   },

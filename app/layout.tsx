@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
-import { Fraunces, Work_Sans } from "next/font/google";
+import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  style: ["normal", "italic"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
   weight: ["400", "500", "600"],
 });
 
-const workSans = Work_Sans({
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-work-sans",
-  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -23,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${fraunces.variable} ${workSans.variable}`}>
+    <html lang="es" className={`${spaceGrotesk.variable} ${inter.variable} ${plexMono.variable}`}>
       <body className="font-body antialiased">{children}</body>
     </html>
   );
