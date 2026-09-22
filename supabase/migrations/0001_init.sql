@@ -296,6 +296,11 @@ create policy "profiles_select_own" on public.profiles
 create policy "profiles_update_own" on public.profiles
   for update using (id = auth.uid());
 
+-- permite que un usuario cree su propia fila si el trigger no llegó a
+-- crearla (ver migración 0002 para instalaciones que ya corrieron esto)
+create policy "profiles_insert_self" on public.profiles
+  for insert with check (id = auth.uid());
+
 -- un comercio puede ver el nombre de los clientes que ya sumaron puntos con él
 -- (para mostrar el historial de movimientos con nombre y no sólo el id).
 create policy "profiles_select_by_business_owner" on public.profiles

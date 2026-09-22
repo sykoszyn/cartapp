@@ -15,21 +15,20 @@ export async function signInAction(_prev: FormState, formData: FormData): Promis
   }
 
   const supabase = createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-  if (error) {
+  if (error || !signInData.user) {
     return { error: "Email o contraseña incorrectos." };
   }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
-    .eq("id", user!.id)
-    .single();
+    .eq("id", signInData.user.id)
+    .maybeSingle();
 
   revalidatePath("/", "layout");
   redirect(profile?.role === "business" ? "/panel" : "/cuenta");
