@@ -429,3 +429,22 @@ create policy "media_update_own_folder" on storage.objects
 create policy "media_delete_own_folder" on storage.objects
   for delete to authenticated
   using (bucket_id = 'media' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ============================================================================
+-- Permisos base del esquema `public` (ver migración 0003 para instalaciones
+-- que ya corrieron esto: sin esto, RLS ni siquiera llega a evaluarse y
+-- Postgres corta antes con "permission denied for table ...").
+-- ============================================================================
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant select on all tables in schema public to anon;
+
+grant execute on all functions in schema public to anon, authenticated;
+
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;
+alter default privileges in schema public
+  grant select on tables to anon;
+alter default privileges in schema public
+  grant execute on functions to anon, authenticated;

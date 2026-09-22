@@ -74,15 +74,6 @@ export async function signUpAction(_prev: FormState, formData: FormData): Promis
 
   revalidatePath("/", "layout");
 
-  console.log(
-    "signUpAction: signUp OK. session?",
-    !!data.session,
-    "user id:",
-    data.user?.id,
-    "role:",
-    role
-  );
-
   if (!data.session) {
     return {
       success:
