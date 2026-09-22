@@ -63,19 +63,40 @@ export async function saveBusinessAction(_prev: FormState, formData: FormData): 
       slug = `${base}-${i}`;
     }
 
-    const { error } = await supabase.from("businesses").insert({
-      owner_id: user.id,
-      name,
-      slug,
-      category,
-      description,
-      address,
-      phone,
-      schedule,
-      logo_url,
-      cover_url,
-    });
+    const { data: created, error } = await supabase
+      .from("businesses")
+      .insert({
+        owner_id: user.id,
+        name,
+        slug,
+        category,
+        description,
+        address,
+        phone,
+        schedule,
+        logo_url,
+        cover_url,
+      })
+      .select("id")
+      .single();
     if (error) return { error: "No se pudo crear el negocio." };
+
+    // Punto de partida editable: el comercio puede renombrar, borrar o
+    // agregar las categorías de su menú que quiera desde /panel/categorias.
+    const defaultCategories = [
+      "Desayunos y meriendas",
+      "Almuerzos",
+      "Cenas",
+      "Promos mediodía",
+      "Promos noche",
+    ];
+    await supabase.from("product_categories").insert(
+      defaultCategories.map((categoryName, index) => ({
+        business_id: created.id,
+        name: categoryName,
+        sort_order: index,
+      }))
+    );
   }
 
   revalidatePath("/panel", "layout");

@@ -52,6 +52,14 @@ export interface Business {
   created_at: string;
 }
 
+export interface ProductCategory {
+  id: string;
+  business_id: string;
+  name: string;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface Product {
   id: string;
   business_id: string;
@@ -59,7 +67,7 @@ export interface Product {
   description: string | null;
   price: number;
   image_url: string | null;
-  category: string | null;
+  category_id: string | null;
   active: boolean;
   sort_order: number;
   created_at: string;

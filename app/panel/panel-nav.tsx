@@ -8,6 +8,7 @@ const items = [
   { href: "/panel", label: "Resumen", exact: true },
   { href: "/panel/negocio", label: "Mi negocio" },
   { href: "/panel/productos", label: "Productos" },
+  { href: "/panel/categorias", label: "Categorías" },
   { href: "/panel/recompensas", label: "Recompensas" },
   { href: "/panel/descuentos", label: "Descuentos" },
   { href: "/panel/puntos", label: "Puntos" },

@@ -94,6 +94,30 @@ export interface Database {
         };
         Relationships: [];
       };
+      product_categories: {
+        Row: {
+          id: string;
+          business_id: string;
+          name: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          business_id: string;
+          name: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          business_id?: string;
+          name?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       products: {
         Row: {
           id: string;
@@ -102,7 +126,7 @@ export interface Database {
           description: string | null;
           price: number;
           image_url: string | null;
-          category: string | null;
+          category_id: string | null;
           active: boolean;
           sort_order: number;
           created_at: string;
@@ -114,7 +138,7 @@ export interface Database {
           description?: string | null;
           price?: number;
           image_url?: string | null;
-          category?: string | null;
+          category_id?: string | null;
           active?: boolean;
           sort_order?: number;
           created_at?: string;
@@ -126,7 +150,7 @@ export interface Database {
           description?: string | null;
           price?: number;
           image_url?: string | null;
-          category?: string | null;
+          category_id?: string | null;
           active?: boolean;
           sort_order?: number;
           created_at?: string;

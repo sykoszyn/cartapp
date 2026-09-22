@@ -22,7 +22,7 @@ export async function saveProductAction(_prev: FormState, formData: FormData): P
   const description = String(formData.get("description") || "").trim() || null;
   const priceRaw = String(formData.get("price") || "0").replace(",", ".");
   const price = Number(priceRaw);
-  const category = String(formData.get("category") || "").trim() || null;
+  const category_id = String(formData.get("category_id") || "").trim() || null;
 
   if (!name) return { error: "El nombre es obligatorio." };
   if (Number.isNaN(price) || price < 0) return { error: "El precio no es válido." };
@@ -45,7 +45,7 @@ export async function saveProductAction(_prev: FormState, formData: FormData): P
   if (id) {
     const { error } = await supabase
       .from("products")
-      .update({ name, description, price, category, image_url })
+      .update({ name, description, price, category_id, image_url })
       .eq("id", id);
     if (error) return { error: "No se pudo guardar el producto." };
   } else {
@@ -54,7 +54,7 @@ export async function saveProductAction(_prev: FormState, formData: FormData): P
       name,
       description,
       price,
-      category,
+      category_id,
       image_url,
     });
     if (error) return { error: "No se pudo crear el producto." };

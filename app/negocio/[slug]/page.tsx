@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card, Badge } from "@/components/ui/card";
 import { cn, formatCurrency, DAY_LABELS } from "@/lib/utils";
 import { RedeemButton } from "./redeem-button";
-import type { Business, Product, Reward, Discount } from "@/lib/types";
+import type { Business, Product, ProductCategory, Reward, Discount } from "@/lib/types";
 
 type Tab = "productos" | "recompensas" | "descuentos";
 
@@ -35,13 +35,24 @@ export default async function BusinessPage({
     ? (searchParams.tab as Tab)
     : "productos";
 
-  const [{ data: products }, { data: rewards }, { data: discounts }, profile] = await Promise.all([
+  const [
+    { data: products },
+    { data: categories },
+    { data: rewards },
+    { data: discounts },
+    profile,
+  ] = await Promise.all([
     supabase
       .from("products")
       .select("*")
       .eq("business_id", biz.id)
       .eq("active", true)
       .order("sort_order"),
+    supabase
+      .from("product_categories")
+      .select("*")
+      .eq("business_id", biz.id)
+      .order("sort_order", { ascending: true }),
     supabase
       .from("rewards")
       .select("*")
@@ -134,7 +145,10 @@ export default async function BusinessPage({
 
           <div className="py-10">
             {tab === "productos" && (
-              <ProductsGrid products={(products as Product[]) ?? []} />
+              <ProductsGrid
+                products={(products as Product[]) ?? []}
+                categories={(categories as ProductCategory[]) ?? []}
+              />
             )}
             {tab === "recompensas" && (
               <RewardsGrid
@@ -178,26 +192,51 @@ function TabLink({
   );
 }
 
-function ProductsGrid({ products }: { products: Product[] }) {
+function ProductsGrid({
+  products,
+  categories,
+}: {
+  products: Product[];
+  categories: ProductCategory[];
+}) {
   if (products.length === 0) {
     return <p className="text-ink-400">Este comercio todavía no cargó productos.</p>;
   }
+
+  const groups = [
+    ...categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      items: products.filter((p) => p.category_id === c.id),
+    })),
+    { id: null, name: "Otros", items: products.filter((p) => !p.category_id) },
+  ].filter((g) => g.items.length > 0);
+
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((p) => (
-        <Card key={p.id} className="overflow-hidden">
-          <div className="aspect-video bg-ink-800/5">
-            {p.image_url && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.image_url} alt="" className="h-full w-full object-cover" />
-            )}
+    <div className="space-y-10">
+      {groups.map((group) => (
+        <div key={group.id ?? "otros"}>
+          <h3 className="font-display text-lg text-ink-800">{group.name}</h3>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map((p) => (
+              <Card key={p.id} className="overflow-hidden">
+                <div className="aspect-video bg-ink-800/5">
+                  {p.image_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.image_url} alt="" className="h-full w-full object-cover" />
+                  )}
+                </div>
+                <div className="p-4">
+                  <p className="font-medium text-ink-800">{p.name}</p>
+                  <p className="mt-1 font-display text-lg text-rust-600">
+                    {formatCurrency(p.price)}
+                  </p>
+                  {p.description && <p className="mt-1 text-sm text-ink-400">{p.description}</p>}
+                </div>
+              </Card>
+            ))}
           </div>
-          <div className="p-4">
-            <p className="font-medium text-ink-800">{p.name}</p>
-            <p className="mt-1 font-display text-lg text-rust-600">{formatCurrency(p.price)}</p>
-            {p.description && <p className="mt-1 text-sm text-ink-400">{p.description}</p>}
-          </div>
-        </Card>
+        </div>
       ))}
     </div>
   );

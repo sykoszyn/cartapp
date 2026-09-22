@@ -1,14 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useFormState } from "react-dom";
 import { saveProductAction } from "./actions";
-import { Label, Input, Textarea } from "@/components/ui/field";
+import { Label, Input, Textarea, Select, FieldHint } from "@/components/ui/field";
 import { ImageField } from "@/components/ui/image-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { FormMessage } from "@/components/ui/form-message";
-import type { Product } from "@/lib/types";
+import type { Product, ProductCategory } from "@/lib/types";
 
-export function ProductForm({ product }: { product?: Product }) {
+export function ProductForm({
+  product,
+  categories,
+}: {
+  product?: Product;
+  categories: ProductCategory[];
+}) {
   const [state, formAction] = useFormState(saveProductAction, {});
 
   return (
@@ -46,13 +53,24 @@ export function ProductForm({ product }: { product?: Product }) {
           />
         </div>
         <div>
-          <Label htmlFor="category">Categoría</Label>
-          <Input
-            id="category"
-            name="category"
-            placeholder="Bebidas, postres…"
-            defaultValue={product?.category ?? ""}
-          />
+          <Label htmlFor="category_id">Categoría</Label>
+          <Select id="category_id" name="category_id" defaultValue={product?.category_id ?? ""}>
+            <option value="">Sin categoría</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </Select>
+          {categories.length === 0 && (
+            <FieldHint>
+              Todavía no tenés categorías.{" "}
+              <Link href="/panel/categorias" className="link-underline font-medium">
+                Creá una
+              </Link>{" "}
+              (ej: desayunos, almuerzos, promos de la noche…).
+            </FieldHint>
+          )}
         </div>
       </div>
 

@@ -12,6 +12,7 @@ export function SubmitButton({
   children: React.ReactNode;
   pendingLabel?: string;
   variant?: "primary" | "secondary" | "ghost" | "outline";
+  size?: "sm" | "md" | "lg";
 }) {
   const { pending } = useFormStatus();
   return (
