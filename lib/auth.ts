@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Business, Profile, UserRole } from "@/lib/types";
@@ -6,11 +7,20 @@ function generateMemberCode() {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 7).toUpperCase();
 }
 
-export async function getCurrentProfile(): Promise<Profile | null> {
+// `cache()` deduplica esta llamada dentro de un mismo request: layout, page
+// y cualquier componente que necesite el usuario actual comparten una sola
+// validación contra Supabase Auth en vez de una por cada uno.
+const getAuthUser = cache(async () => {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  return user;
+});
+
+export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
+  const supabase = createClient();
+  const user = await getAuthUser();
 
   if (!user) return null;
 
@@ -50,7 +60,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   }
 
   return created as Profile;
-}
+});
 
 export async function requireProfile(): Promise<Profile> {
   const profile = await getCurrentProfile();
@@ -64,11 +74,9 @@ export async function requireBusinessProfile(): Promise<Profile> {
   return profile;
 }
 
-export async function getMyBusiness(): Promise<Business | null> {
+export const getMyBusiness = cache(async (): Promise<Business | null> => {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) return null;
 
   const { data } = await supabase
@@ -78,4 +86,4 @@ export async function getMyBusiness(): Promise<Business | null> {
     .maybeSingle();
 
   return (data as Business) ?? null;
-}
+});

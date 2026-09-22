@@ -58,12 +58,12 @@ export function PanelNav({ hasBusiness }: { hasBusiness: boolean }) {
               key={item.href}
               href={disabled ? "/panel/negocio" : item.href}
               className={cn(
-                "whitespace-nowrap rounded px-3.5 py-2.5 text-sm font-medium transition",
+                "whitespace-nowrap rounded border-l-[3px] px-3.5 py-2.5 text-sm font-medium transition active:scale-[0.98]",
                 active
-                  ? "bg-ink-800 text-cream-50"
+                  ? "border-rust-500 bg-ink-800 text-cream-50"
                   : disabled
-                  ? "text-ink-400/50"
-                  : "text-ink-600 hover:bg-ink-800/5"
+                  ? "border-transparent text-ink-400/50"
+                  : "border-transparent text-ink-600 hover:border-rust-300 hover:bg-ink-800/5"
               )}
             >
               {item.label}

@@ -26,14 +26,14 @@ const config: Config = {
           800: "#161618",
           900: "#0A0A0B",
         },
-        // acento único: ámbar de sello/ticket
+        // acento único: naranja de sello/ticket (más vivo que el ámbar anterior)
         rust: {
-          50: "#FEF6E7",
-          100: "#FCE7B8",
-          300: "#F7C348",
-          500: "#EDA608",
-          600: "#C58607",
-          700: "#8F6205",
+          50: "#FFF4E0",
+          100: "#FFE2AD",
+          300: "#FFB13D",
+          500: "#FF8A00",
+          600: "#E06E00",
+          700: "#A85400",
         },
         // secundario: verde azulado para estados "activo/éxito"
         olive: {
