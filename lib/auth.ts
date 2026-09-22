@@ -12,7 +12,12 @@ export async function getCurrentProfile(): Promise<Profile | null> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return null;
+  if (!user) {
+    console.log("getCurrentProfile: no hay usuario autenticado (getUser devolvió null)");
+    return null;
+  }
+
+  console.log("getCurrentProfile: usuario autenticado", user.id);
 
   const { data, error } = await supabase
     .from("profiles")
