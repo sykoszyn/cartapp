@@ -131,6 +131,27 @@ token a mano sigue ahí también, como alternativa). Los tokens que da este
 flujo vencen cada tanto; la app los renueva sola con el refresh token, sin
 que el comercio tenga que hacer nada.
 
+## 6. Importar menú de otra plataforma (opcional)
+
+Un comercio que ya tiene su carta en otro lado (otra app de pedidos, su
+propia web, una red social) puede pegar el link en `/panel/productos/importar`
+en vez de cargar todo a mano. La app baja el contenido de esa página, y usa
+la API de Claude para leerlo y estructurarlo en categorías y productos con
+precio — funciona sea cual sea la plataforma de origen, porque no depende de
+un scraper hecho a medida por sitio, sino de que un modelo lea el texto. El
+comercio revisa lo que se encontró (con checkboxes para descartar lo que no
+sirva) antes de que se cree nada.
+
+Requiere una `ANTHROPIC_API_KEY` (se saca en
+[console.anthropic.com](https://console.anthropic.com)). Sin esa variable,
+la sección lo indica y no rompe nada más.
+
+Una limitación real: si el link es de una página que arma el menú
+enteramente con JavaScript (varias apps de pedidos hacen esto), bajar el
+HTML crudo puede no traer el contenido. Para esos casos, el mismo formulario
+tiene un campo para pegar el texto del menú directamente — copiado de la
+otra página, de un PDF, de donde sea — y funciona igual de bien.
+
 ## Cómo funciona el modelo de datos
 
 - **Comercio**: crea su negocio (`businesses`), carga productos
@@ -175,6 +196,7 @@ app/
     analytics/             → ingresos, productos más pedidos, puntos pendientes
     negocio/               → datos del negocio (logo, portada, dirección...)
     productos/              → CRUD de productos con foto y precio
+      importar/             → importar menú desde un link (o texto pegado)
     categorias/             → categorías de menú propias de cada comercio
     pedidos/                → pedidos entrantes, confirmar pago manual
     recompensas/            → catálogo de canje

@@ -45,9 +45,17 @@ export default async function ProductosPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl text-ink-800">Productos</h1>
-        <Link href="/panel/productos/nuevo" className={buttonVariants({ size: "sm" })}>
-          Agregar producto
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/panel/productos/importar"
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            Importar menú
+          </Link>
+          <Link href="/panel/productos/nuevo" className={buttonVariants({ size: "sm" })}>
+            Agregar producto
+          </Link>
+        </div>
       </div>
 
       {productList.length > 0 ? (
@@ -97,9 +105,17 @@ export default async function ProductosPage() {
       ) : (
         <div className="mt-10 rounded-lg border border-dashed border-ink-800/20 p-10 text-center">
           <p className="text-ink-400">Todavía no cargaste productos.</p>
-          <Link href="/panel/productos/nuevo" className={buttonVariants({ className: "mt-4" })}>
-            Agregar el primero
-          </Link>
+          <div className="mt-4 flex justify-center gap-3">
+            <Link href="/panel/productos/nuevo" className={buttonVariants({})}>
+              Agregar el primero
+            </Link>
+            <Link
+              href="/panel/productos/importar"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Importar menú
+            </Link>
+          </div>
         </div>
       )}
     </div>
