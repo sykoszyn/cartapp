@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { createPaymentPreference } from "@/lib/mercadopago";
+import { createPaymentPreference, getValidMpAccessToken } from "@/lib/mercadopago";
 import { getSiteUrl } from "@/lib/site-url";
 import { notifyOrderReceived } from "@/lib/notifications";
 
@@ -77,13 +77,9 @@ export async function checkoutAction(
     console.error("checkoutAction: no se pudo avisar al comercio", e)
   );
 
-  const { data: paymentSettings } = await supabase
-    .from("business_payment_settings")
-    .select("mp_access_token")
-    .eq("business_id", businessId)
-    .maybeSingle();
+  const accessToken = await getValidMpAccessToken(supabase, businessId);
 
-  if (!paymentSettings?.mp_access_token) {
+  if (!accessToken) {
     // El comercio todavía no conectó Mercado Pago: el pedido queda
     // pendiente para que lo confirmen manualmente en el mostrador.
     return { orderId: order.id };
@@ -94,7 +90,7 @@ export async function checkoutAction(
 
   try {
     const preference = await createPaymentPreference({
-      accessToken: paymentSettings.mp_access_token,
+      accessToken,
       items: orderItems.map((i) => ({
         title: i.name,
         quantity: i.quantity,

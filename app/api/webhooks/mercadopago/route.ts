@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getPayment } from "@/lib/mercadopago";
+import { getPayment, getValidMpAccessToken } from "@/lib/mercadopago";
 import { notifyPointsEarned } from "@/lib/notifications";
 
 // Mercado Pago llama acá cuando cambia el estado de un pago. Nunca
@@ -31,17 +31,13 @@ async function handle(request: NextRequest) {
       return NextResponse.json({ ok: true, alreadyHandled: true });
     }
 
-    const { data: paymentSettings } = await admin
-      .from("business_payment_settings")
-      .select("mp_access_token")
-      .eq("business_id", order.business_id)
-      .maybeSingle();
+    const accessToken = await getValidMpAccessToken(admin, order.business_id);
 
-    if (!paymentSettings?.mp_access_token) {
+    if (!accessToken) {
       return NextResponse.json({ ok: true, noToken: true });
     }
 
-    const payment = await getPayment(paymentSettings.mp_access_token, paymentId);
+    const payment = await getPayment(accessToken, paymentId);
 
     if (payment.external_reference !== order.id) {
       console.error("webhook mercadopago: external_reference no coincide con el pedido", {

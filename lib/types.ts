@@ -147,6 +147,10 @@ export interface OrderItem {
 export interface BusinessPaymentSettings {
   business_id: string;
   mp_access_token: string | null;
+  mp_refresh_token: string | null;
+  mp_user_id: string | null;
+  mp_public_key: string | null;
+  mp_token_expires_at: string | null;
   updated_at: string;
 }
 

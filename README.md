@@ -13,8 +13,8 @@ Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase
 
 1. Creá un proyecto en [supabase.com](https://supabase.com).
 2. Andá a **SQL Editor** y ejecutá, en orden, **todos** los archivos de
-   [`supabase/migrations/`](./supabase/migrations/) (0001, 0002, 0003, 0004,
-   0005, 0006 — cada uno depende del anterior). En conjunto crean:
+   [`supabase/migrations/`](./supabase/migrations/) (0001 a 0007, en orden —
+   cada uno depende del anterior). En conjunto crean:
    - Las tablas (`profiles`, `businesses`, `products`, `product_categories`,
      `rewards`, `discounts`, `customer_points`, `points_transactions`,
      `orders`, `order_items`, `business_payment_settings`).
@@ -92,22 +92,44 @@ Abrí [http://localhost:3000](http://localhost:3000).
 ## 5. Pedidos y pagos con Mercado Pago
 
 Cada comercio conecta **su propia** cuenta de Mercado Pago desde
-`/panel/pagos` (pega su Access Token de producción, que consigue en su
-cuenta de Mercado Pago → Tu negocio → Configuración → Credenciales). El
-dinero entra directo a la cuenta del comercio: qrcartapp nunca lo recibe ni
-lo retiene.
+`/panel/pagos`. El dinero entra directo a la cuenta del comercio: qrcartapp
+nunca lo recibe ni lo retiene.
 
 Con eso conectado, el cliente arma su pedido desde el menú, va a pagar con
 el Checkout de Mercado Pago (que ofrece QR y tarjeta) y al aprobarse el pago,
 un webhook (`/api/webhooks/mercadopago`) confirma el estado real contra la
-API de Mercado Pago y suma los puntos solo. No hace falta configurar nada
-en el dashboard de Mercado Pago: la URL de notificación se manda
+API de Mercado Pago y suma los puntos solo. No hace falta configurar nada a
+mano en el dashboard de Mercado Pago: la URL de notificación se manda
 automáticamente en cada pedido.
 
 Si un comercio todavía no conectó Mercado Pago, el pedido se registra igual
 como "pago en el local": el cliente ve su código de socio para mostrar en
 el mostrador, y el comercio lo confirma manualmente desde `/panel/pedidos`
 (eso también suma los puntos).
+
+### Conectar con un click (OAuth) — opcional pero recomendado
+
+Por defecto, cada comercio conecta pegando su Access Token a mano (lo sacan
+de su cuenta de Mercado Pago → Tu negocio → Configuración → Credenciales).
+Funciona perfecto, pero si preferís que sea un solo click ("Conectar con
+Mercado Pago" → inicia sesión → acepta → vuelve solo, sin copiar nada), hay
+que crear **una aplicación de Mercado Pago para toda la plataforma** (se
+hace una sola vez, no por comercio):
+
+1. Entrá a tu cuenta de Mercado Pago → panel de desarrolladores → **Tus
+   integraciones** → **Crear aplicación**. Elegí que vas a operar como
+   marketplace/plataforma (necesitás poder configurar una **Redirect URI**).
+2. Como Redirect URI cargá `https://tu-dominio/api/mercadopago/oauth/callback`
+   (con tu dominio real, ej. `https://qrcartapp.vercel.app/...`).
+3. Copiá el **Client ID** y el **Client Secret** de esa aplicación y
+   cargalos en Vercel como `MERCADOPAGO_CLIENT_ID` y
+   `MERCADOPAGO_CLIENT_SECRET`.
+
+En cuanto esas dos variables estén cargadas, `/panel/pagos` muestra el botón
+"Conectar con Mercado Pago" automáticamente (el formulario para pegar el
+token a mano sigue ahí también, como alternativa). Los tokens que da este
+flujo vencen cada tanto; la app los renueva sola con el refresh token, sin
+que el comercio tenga que hacer nada.
 
 ## Cómo funciona el modelo de datos
 
