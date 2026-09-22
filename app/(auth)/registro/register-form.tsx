@@ -18,7 +18,7 @@ export function RegisterForm({ initialRole }: { initialRole: UserRole }) {
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-rust-500">Empecemos</p>
       <h1 className="mt-2 font-display text-3xl text-ink-800">Creá tu cuenta</h1>
-      <p className="mt-2 text-ink-400">Elegí cómo querés usar Fideliza.</p>
+      <p className="mt-2 text-ink-400">Elegí cómo querés usar qrcartapp.</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         <RoleCard

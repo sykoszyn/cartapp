@@ -1,4 +1,4 @@
-# Fideliza
+# qrcartapp
 
 Plataforma de fidelización para restaurantes, cafeterías y locales de take away.
 Los comercios cargan su negocio y sus productos, configuran su propio programa

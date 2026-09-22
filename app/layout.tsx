@@ -21,7 +21,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fideliza — puntos y beneficios de tu barrio",
+  title: "qrcartapp — puntos y beneficios de tu barrio",
   description:
     "La forma simple de sumar puntos, canjear recompensas y enterarte de los descuentos de tus comercios favoritos.",
 };

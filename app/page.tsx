@@ -29,7 +29,7 @@ export default async function HomePage() {
               Cada compra suma. Cada visita vale más.
             </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-400">
-              Fideliza conecta a comercios y clientes: puntos por compra, recompensas
+              qrcartapp conecta a comercios y clientes: puntos por compra, recompensas
               para canjear y los descuentos del día, todo en un mismo lugar — sin
               apps complicadas ni tarjetas de cartón.
             </p>
