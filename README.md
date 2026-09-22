@@ -29,8 +29,17 @@ Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase
    ingresar sin confirmar el email (más simple para probar), desactivá
    "Confirm email". Si la dejás activa, el usuario recibe un mail de
    confirmación y la app se lo indica.
-4. Copiá la **URL del proyecto** y la **anon key** desde
-   **Project Settings → API**.
+4. En **Authentication → URL Configuration** configurá:
+   - **Site URL**: la URL de tu deploy, ej. `https://qrcartapp.vercel.app`
+   - **Redirect URLs**: agregá `https://qrcartapp.vercel.app/**` y, para
+     poder probar en tu máquina, también `http://localhost:3000/**`.
+
+   Esto es lo que hace que el link del mail de confirmación (y cualquier
+   redirect de auth) apunte a tu sitio y no a un dominio por defecto.
+5. Copiá la **URL del proyecto** y la **anon/publishable key** desde
+   **Project Settings → API**. Nunca uses la `service_role`/`secret` key en
+   esta app: no hace falta, toda la lógica sensible pasa por RLS y por las
+   funciones `security definer` del punto 2.
 
 ## 2. Variables de entorno
 
@@ -39,7 +48,12 @@ Copiá `.env.example` a `.env.local` y completá:
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
+NEXT_PUBLIC_SITE_URL=https://qrcartapp.vercel.app
 ```
+
+`NEXT_PUBLIC_SITE_URL` es la URL pública del sitio; se usa para armar el
+link de confirmación de email al registrarse. En local podés dejarla en
+`http://localhost:3000`.
 
 ## 3. Correr en local
 
@@ -55,7 +69,10 @@ Abrí [http://localhost:3000](http://localhost:3000).
 1. Importá el repo en [vercel.com/new](https://vercel.com/new).
 2. Framework preset: **Next.js** (se detecta solo).
 3. Cargá las mismas variables de entorno (`NEXT_PUBLIC_SUPABASE_URL`,
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`) en **Settings → Environment Variables**.
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`) en
+   **Settings → Environment Variables**. `NEXT_PUBLIC_SITE_URL` tiene que
+   ser la URL final del deploy (ej. `https://qrcartapp.vercel.app`), la
+   misma que configuraste como Site URL en Supabase.
 4. Deploy. No hace falta configuración adicional: no usa runtimes especiales
    ni build steps extra.
 

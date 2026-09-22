@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site-url";
 import type { UserRole, FormState } from "@/lib/types";
 
 export async function signInAction(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -52,6 +53,7 @@ export async function signUpAction(_prev: FormState, formData: FormData): Promis
     password,
     options: {
       data: { role, full_name: fullName },
+      emailRedirectTo: `${getSiteUrl()}/ingresar`,
     },
   });
 
