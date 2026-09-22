@@ -33,6 +33,8 @@ export interface Profile {
   created_at: string;
 }
 
+export type BusinessPlan = "free" | "pro";
+
 export interface Business {
   id: string;
   owner_id: string;
@@ -49,6 +51,7 @@ export interface Business {
   amount_per_point: number;
   points_label: string;
   active: boolean;
+  plan: BusinessPlan;
   created_at: string;
 }
 
@@ -115,4 +118,42 @@ export interface PointsTransaction {
   note: string | null;
   created_by: string | null;
   created_at: string;
+}
+
+export type OrderStatus = "pending" | "paid" | "cancelled";
+
+export interface Order {
+  id: string;
+  business_id: string;
+  customer_id: string;
+  status: OrderStatus;
+  subtotal: number;
+  note: string | null;
+  mp_preference_id: string | null;
+  mp_payment_id: string | null;
+  created_at: string;
+  paid_at: string | null;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string | null;
+  name: string;
+  unit_price: number;
+  quantity: number;
+}
+
+export interface BusinessPaymentSettings {
+  business_id: string;
+  mp_access_token: string | null;
+  updated_at: string;
+}
+
+export interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  imageUrl: string | null;
+  quantity: number;
 }

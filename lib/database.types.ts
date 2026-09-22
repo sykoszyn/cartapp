@@ -54,6 +54,7 @@ export interface Database {
           amount_per_point: number;
           points_label: string;
           active: boolean;
+          plan: string;
           created_at: string;
         };
         Insert: {
@@ -72,6 +73,7 @@ export interface Database {
           amount_per_point?: number;
           points_label?: string;
           active?: boolean;
+          plan?: string;
           created_at?: string;
         };
         Update: {
@@ -90,6 +92,7 @@ export interface Database {
           amount_per_point?: number;
           points_label?: string;
           active?: boolean;
+          plan?: string;
           created_at?: string;
         };
         Relationships: [];
@@ -289,9 +292,97 @@ export interface Database {
         };
         Relationships: [];
       };
+      orders: {
+        Row: {
+          id: string;
+          business_id: string;
+          customer_id: string;
+          status: "pending" | "paid" | "cancelled";
+          subtotal: number;
+          note: string | null;
+          mp_preference_id: string | null;
+          mp_payment_id: string | null;
+          created_at: string;
+          paid_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          business_id: string;
+          customer_id: string;
+          status?: "pending" | "paid" | "cancelled";
+          subtotal?: number;
+          note?: string | null;
+          mp_preference_id?: string | null;
+          mp_payment_id?: string | null;
+          created_at?: string;
+          paid_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          business_id?: string;
+          customer_id?: string;
+          status?: "pending" | "paid" | "cancelled";
+          subtotal?: number;
+          note?: string | null;
+          mp_preference_id?: string | null;
+          mp_payment_id?: string | null;
+          created_at?: string;
+          paid_at?: string | null;
+        };
+        Relationships: [];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string | null;
+          name: string;
+          unit_price: number;
+          quantity: number;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id?: string | null;
+          name: string;
+          unit_price: number;
+          quantity?: number;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          product_id?: string | null;
+          name?: string;
+          unit_price?: number;
+          quantity?: number;
+        };
+        Relationships: [];
+      };
+      business_payment_settings: {
+        Row: {
+          business_id: string;
+          mp_access_token: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          business_id: string;
+          mp_access_token?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          business_id?: string;
+          mp_access_token?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {};
     Functions: {
+      award_points_for_order: {
+        Args: { p_order_id: string };
+        Returns: { points_added: number; new_balance: number }[];
+      };
       add_points_by_member_code: {
         Args: {
           p_business_id: string;
@@ -299,7 +390,12 @@ export interface Database {
           p_amount: number;
           p_note?: string | null;
         };
-        Returns: { points_added: number; new_balance: number; customer_name: string }[];
+        Returns: {
+          points_added: number;
+          new_balance: number;
+          customer_name: string;
+          customer_id: string;
+        }[];
       };
       redeem_reward: {
         Args: { p_reward_id: string };

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyBusiness } from "@/lib/auth";
+import { notifyPointsEarned } from "@/lib/notifications";
 import type { FormState } from "@/lib/types";
 
 export async function updatePointsConfigAction(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -55,6 +56,16 @@ export async function addPointsAction(_prev: FormState, formData: FormData): Pro
   if (error) return { error: error.message };
 
   const result = data?.[0];
+
+  if (result?.customer_id) {
+    notifyPointsEarned({
+      customerId: result.customer_id,
+      businessId: business.id,
+      points: result.points_added,
+      reason: note ? `Por tu compra (${note}).` : "Por tu compra.",
+    }).catch((e) => console.error("addPointsAction: no se pudo avisar por email", e));
+  }
+
   revalidatePath("/panel/puntos");
   revalidatePath("/panel");
   return {

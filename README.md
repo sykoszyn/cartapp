@@ -12,16 +12,19 @@ Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase
 ## 1. Crear el proyecto en Supabase
 
 1. Creá un proyecto en [supabase.com](https://supabase.com).
-2. Andá a **SQL Editor** y ejecutá el contenido completo de
-   [`supabase/migrations/0001_init.sql`](./supabase/migrations/0001_init.sql).
-   Esto crea:
-   - Las tablas (`profiles`, `businesses`, `products`, `rewards`,
-     `discounts`, `customer_points`, `points_transactions`).
+2. Andá a **SQL Editor** y ejecutá, en orden, **todos** los archivos de
+   [`supabase/migrations/`](./supabase/migrations/) (0001, 0002, 0003, 0004,
+   0005, 0006 — cada uno depende del anterior). En conjunto crean:
+   - Las tablas (`profiles`, `businesses`, `products`, `product_categories`,
+     `rewards`, `discounts`, `customer_points`, `points_transactions`,
+     `orders`, `order_items`, `business_payment_settings`).
    - El trigger que crea el `profile` automáticamente al registrarse
      (con `role` y un `member_code` único para clientes).
-   - Las funciones `add_points_by_member_code` y `redeem_reward`
-     (RPC que usa la app para sumar y canjear puntos de forma segura).
-   - Todas las políticas de **Row Level Security**.
+   - Las funciones `add_points_by_member_code`, `redeem_reward` y
+     `award_points_for_order` (RPC que usa la app para sumar/canjear puntos
+     de forma segura, ya sea por carga manual o por un pedido pagado).
+   - Todas las políticas de **Row Level Security** y los permisos base del
+     esquema `public`.
    - El bucket público de Storage `media` (logos, portadas, fotos de
      productos/recompensas y banners de descuentos), con políticas para que
      cada usuario sólo pueda escribir dentro de su propia carpeta.
@@ -36,10 +39,8 @@ Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Supabase
 
    Esto es lo que hace que el link del mail de confirmación (y cualquier
    redirect de auth) apunte a tu sitio y no a un dominio por defecto.
-5. Copiá la **URL del proyecto** y la **anon/publishable key** desde
-   **Project Settings → API**. Nunca uses la `service_role`/`secret` key en
-   esta app: no hace falta, toda la lógica sensible pasa por RLS y por las
-   funciones `security definer` del punto 2.
+5. Copiá la **URL del proyecto**, la **anon/publishable key** y la
+   **service_role/secret key** desde **Project Settings → API**.
 
 ## 2. Variables de entorno
 
@@ -49,11 +50,24 @@ Copiá `.env.example` a `.env.local` y completá:
 NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
 NEXT_PUBLIC_SITE_URL=https://qrcartapp.vercel.app
+SUPABASE_SERVICE_ROLE_KEY=tu-service-role-o-secret-key
+
+# Opcional: sin esto la app funciona igual, sólo no se envían emails
+RESEND_API_KEY=
+EMAIL_FROM="qrcartapp <notificaciones@tudominio.com>"
 ```
 
-`NEXT_PUBLIC_SITE_URL` es la URL pública del sitio; se usa para armar el
-link de confirmación de email al registrarse. En local podés dejarla en
-`http://localhost:3000`.
+- `NEXT_PUBLIC_SITE_URL` es la URL pública del sitio; se usa para armar el
+  link de confirmación de email y las URLs de vuelta de Mercado Pago. En
+  local podés dejarla en `http://localhost:3000`.
+- `SUPABASE_SERVICE_ROLE_KEY` **nunca** lleva el prefijo `NEXT_PUBLIC_` (no
+  debe llegar nunca al navegador). La usa exclusivamente el webhook de
+  Mercado Pago (`app/api/webhooks/mercadopago/route.ts`) para confirmar un
+  pago y sumar los puntos sin depender de una sesión de usuario.
+- `RESEND_API_KEY` habilita los emails (sumaste puntos, canjeaste una
+  recompensa, tenés un pedido nuevo). Sacás una key gratis en
+  [resend.com](https://resend.com). Si la dejás vacía, la app funciona
+  igual: sólo deja un log en vez de mandar el email.
 
 ## 3. Correr en local
 
@@ -68,13 +82,32 @@ Abrí [http://localhost:3000](http://localhost:3000).
 
 1. Importá el repo en [vercel.com/new](https://vercel.com/new).
 2. Framework preset: **Next.js** (se detecta solo).
-3. Cargá las mismas variables de entorno (`NEXT_PUBLIC_SUPABASE_URL`,
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`) en
+3. Cargá las mismas variables de entorno de arriba en
    **Settings → Environment Variables**. `NEXT_PUBLIC_SITE_URL` tiene que
    ser la URL final del deploy (ej. `https://qrcartapp.vercel.app`), la
    misma que configuraste como Site URL en Supabase.
 4. Deploy. No hace falta configuración adicional: no usa runtimes especiales
    ni build steps extra.
+
+## 5. Pedidos y pagos con Mercado Pago
+
+Cada comercio conecta **su propia** cuenta de Mercado Pago desde
+`/panel/pagos` (pega su Access Token de producción, que consigue en su
+cuenta de Mercado Pago → Tu negocio → Configuración → Credenciales). El
+dinero entra directo a la cuenta del comercio: qrcartapp nunca lo recibe ni
+lo retiene.
+
+Con eso conectado, el cliente arma su pedido desde el menú, va a pagar con
+el Checkout de Mercado Pago (que ofrece QR y tarjeta) y al aprobarse el pago,
+un webhook (`/api/webhooks/mercadopago`) confirma el estado real contra la
+API de Mercado Pago y suma los puntos solo. No hace falta configurar nada
+en el dashboard de Mercado Pago: la URL de notificación se manda
+automáticamente en cada pedido.
+
+Si un comercio todavía no conectó Mercado Pago, el pedido se registra igual
+como "pago en el local": el cliente ve su código de socio para mostrar en
+el mostrador, y el comercio lo confirma manualmente desde `/panel/pedidos`
+(eso también suma los puntos).
 
 ## Cómo funciona el modelo de datos
 
@@ -92,10 +125,17 @@ Abrí [http://localhost:3000](http://localhost:3000).
 - **Canje**: el cliente canjea una recompensa desde la ficha pública del
   comercio; la función `redeem_reward` valida el saldo, descuenta stock si
   corresponde y registra el movimiento.
+- **Pedidos**: el cliente arma un carrito (`orders` + `order_items`) desde
+  el menú. Al pagarse (por Mercado Pago o confirmación manual del comercio),
+  `award_points_for_order` suma los puntos automáticamente — es la misma
+  idea que `add_points_by_member_code`, pero disparada por un pedido en vez
+  de por un monto tipeado a mano.
 - Todo el acceso a datos pasa por **RLS**: un comercio sólo puede
   editar lo suyo, un cliente sólo ve su propio saldo/código, y las
   operaciones sensibles (sumar/canjear puntos) sólo ocurren a través de las
   funciones `security definer`, nunca con updates directos desde el cliente.
+  La única excepción es el webhook de Mercado Pago, que corre server-side
+  con la `service_role` key porque no hay una sesión de usuario detrás.
 
 ## Estructura del proyecto
 
@@ -105,16 +145,26 @@ app/
   (auth)/ingresar, registro → login / registro con selección de rol
   explorar/                → búsqueda pública de comercios
   negocio/[slug]/          → ficha pública: productos, recompensas, descuentos
+    carrito/               → revisión del pedido + checkout
+    pedido/[orderId]/      → estado del pedido (pagado / a confirmar)
   cuenta/                  → perfil del cliente, código de socio, saldos
+  api/webhooks/mercadopago/ → confirma pagos y suma puntos
   panel/                   → dashboard del comercio
+    analytics/             → ingresos, productos más pedidos, puntos pendientes
     negocio/               → datos del negocio (logo, portada, dirección...)
     productos/              → CRUD de productos con foto y precio
+    categorias/             → categorías de menú propias de cada comercio
+    pedidos/                → pedidos entrantes, confirmar pago manual
     recompensas/            → catálogo de canje
     descuentos/             → días + medio de pago + banner
     puntos/                 → configuración del programa + carga manual de puntos
+    pagos/                  → conectar Mercado Pago
+    qr/                     → código QR imprimible del negocio
 lib/
-  supabase/               → clientes (browser, server, middleware)
+  supabase/               → clientes (browser, server, middleware, admin/service_role)
+  mercadopago.ts, email.ts, notifications.ts
   auth.ts, storage.ts, types.ts, database.types.ts
+components/cart/          → carrito (context + localStorage por negocio)
 supabase/migrations/      → esquema SQL completo
 ```
 

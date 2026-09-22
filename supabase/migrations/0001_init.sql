@@ -176,7 +176,7 @@ create or replace function public.add_points_by_member_code(
   p_amount numeric,
   p_note text default null
 )
-returns table(points_added int, new_balance int, customer_name text)
+returns table(points_added int, new_balance int, customer_name text, customer_id uuid)
 as $$
 declare
   v_customer_id uuid;
@@ -223,7 +223,7 @@ begin
   from public.customer_points
   where customer_id = v_customer_id and business_id = p_business_id;
 
-  return query select v_points, v_new_balance, v_customer_name;
+  return query select v_points, v_new_balance, v_customer_name, v_customer_id;
 end;
 $$ language plpgsql security definer set search_path = public;
 

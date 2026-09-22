@@ -6,12 +6,15 @@ import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/panel", label: "Resumen", exact: true },
+  { href: "/panel/analytics", label: "Estadísticas" },
   { href: "/panel/negocio", label: "Mi negocio" },
   { href: "/panel/productos", label: "Productos" },
   { href: "/panel/categorias", label: "Categorías" },
+  { href: "/panel/pedidos", label: "Pedidos" },
   { href: "/panel/recompensas", label: "Recompensas" },
   { href: "/panel/descuentos", label: "Descuentos" },
   { href: "/panel/puntos", label: "Puntos" },
+  { href: "/panel/pagos", label: "Pagos" },
   { href: "/panel/qr", label: "Código QR" },
 ];
 

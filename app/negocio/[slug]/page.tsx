@@ -7,6 +7,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card, Badge } from "@/components/ui/card";
 import { cn, formatCurrency, DAY_LABELS } from "@/lib/utils";
 import { RedeemButton } from "./redeem-button";
+import { CartProvider } from "@/components/cart/cart-context";
+import { CartBar } from "@/components/cart/cart-bar";
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import type { Business, Product, ProductCategory, Reward, Discount } from "@/lib/types";
 
 type Tab = "productos" | "recompensas" | "descuentos";
@@ -80,9 +83,10 @@ export default async function BusinessPage({
   }
 
   return (
+    <CartProvider businessId={biz.id}>
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
-      <main className="flex-1">
+      <main className="flex-1 pb-20">
         <div className="aspect-[3/1] w-full bg-ink-800/5 sm:aspect-[4/1]">
           {biz.cover_url && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -163,8 +167,10 @@ export default async function BusinessPage({
           </div>
         </div>
       </main>
+      <CartBar slug={biz.slug} />
       <SiteFooter />
     </div>
+    </CartProvider>
   );
 }
 
@@ -232,6 +238,12 @@ function ProductsGrid({
                     {formatCurrency(p.price)}
                   </p>
                   {p.description && <p className="mt-1 text-sm text-ink-400">{p.description}</p>}
+                  <AddToCartButton
+                    productId={p.id}
+                    name={p.name}
+                    price={p.price}
+                    imageUrl={p.image_url}
+                  />
                 </div>
               </Card>
             ))}
