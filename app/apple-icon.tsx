@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LogoMark } from "@/components/logo-mark";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
@@ -14,23 +15,9 @@ export default function AppleIcon() {
           alignItems: "center",
           justifyContent: "center",
           background: "#161618",
-          padding: 34,
         }}
       >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#FFFFFF",
-            borderRadius: 10,
-            padding: 22,
-          }}
-        >
-          <div style={{ width: "100%", height: "100%", background: "#161618", borderRadius: 4 }} />
-        </div>
+        <LogoMark size={104} strokeWidth={2.6} />
       </div>
     ),
     { ...size }
