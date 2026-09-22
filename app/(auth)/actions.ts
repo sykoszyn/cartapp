@@ -21,6 +21,15 @@ export async function signInAction(_prev: FormState, formData: FormData): Promis
   });
 
   if (error || !signInData.user) {
+    if (error) console.error("signInAction: signInWithPassword falló:", error.message);
+
+    if (error?.message.toLowerCase().includes("email not confirmed")) {
+      return {
+        error:
+          "Tu cuenta todavía no confirmó el email. Revisá tu correo o desactivá la confirmación de email en Supabase (Authentication → Sign In / Providers → Email) y volvé a registrarte.",
+      };
+    }
+
     return { error: "Email o contraseña incorrectos." };
   }
 
